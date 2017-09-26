@@ -1,0 +1,2 @@
+-unsafe
+-define:PLAT_NO_INTERLOCKED

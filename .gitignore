@@ -1,0 +1,13 @@
+.idea/
+Assembly-CSharp-Editor-firstpass.csproj
+Assembly-CSharp-Editor.csproj
+Assembly-CSharp-firstpass.csproj
+Assembly-CSharp.csproj
+Builds/
+Library/
+ProjectSettings/
+VoxelEngine.sln
+VoxelEngine.sln.DotSettings.user
+VoxelEngine.userprefs
+obj/
+

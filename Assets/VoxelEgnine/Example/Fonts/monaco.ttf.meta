@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: d91be49a0800c4a36a406592e2024008
+timeCreated: 1505054596
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Monaco
+  fontNames:
+  - Monaco
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
