@@ -10,4 +10,6 @@ VoxelEngine.sln
 VoxelEngine.sln.DotSettings.user
 VoxelEngine.userprefs
 obj/
-
+Temp/
+UnityPackageManager/
+Assets/Plugins/

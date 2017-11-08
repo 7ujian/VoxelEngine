@@ -32,6 +32,10 @@ namespace Vox
             {
                 builder = waterBuilder
             };
+            controllers[(int) BlockId.Worm] = new BlockWorm()
+            {
+                builder = cubeBuilder
+            };
             controllers[(int)BlockId.Void] = new BlockVoid();
 
             initialized = true;

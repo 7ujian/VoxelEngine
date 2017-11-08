@@ -10,7 +10,6 @@ namespace Vox {
 	{
 		[Key(1)]
         public Dictionary<int, Chunk> chunks;
-
 		[Key(2)]
 		public int bitWidthX;
 		[Key(3)]

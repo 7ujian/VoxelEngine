@@ -56,8 +56,8 @@ namespace Vox.Render
 
                     }).ObserveOnMainThread().Subscribe(xs =>
                     {
-                        VolumeRendererManager.Instance.QueueTask(task, () =>
-                        {
+//                        VolumeRendererManager.Instance.QueueTask(task, () =>
+//                        {
                             Mesh mesh = task.ToMesh();
                             meshFilter.mesh = mesh;
 
@@ -68,7 +68,7 @@ namespace Vox.Render
                             isBuilding = false;
                             isDirty = false;
                             renderable.Render();    
-                        });                        
+//                        });                        
                     });
                 }
             }            

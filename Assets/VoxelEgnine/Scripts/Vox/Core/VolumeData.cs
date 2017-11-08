@@ -1,5 +1,4 @@
 using MessagePack;
-using UnityEngine.VR.WSA;
 
 namespace Vox
 {

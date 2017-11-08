@@ -40,7 +40,7 @@ public class BlockMan : MonoBehaviour
 		// TODO: @jian 以后这些配到表里
 		toolBar.cells[0].item = new Item {id = (int)BlockId.Air, canDig = true};
 		toolBar.cells[1].item = new Item {id = (int)BlockId.Stone, canDig = false};
-		toolBar.cells[2].item = new Item {id = (int)BlockId.Water, canDig = false};
+		toolBar.cells[2].item = new Item {id = (int)BlockId.Worm, canDig = false};
 
 		context = VoxelEngineContext.Default;	
 		
