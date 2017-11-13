@@ -25,6 +25,21 @@ namespace Vox
 			this.z = z;
 		}
 		
+		public static Int3 operator +(Int3 c1, Int3 c2)
+		{
+			return new Int3(c1.x + c2.x, c1.y + c2.y, c1.z + c2.z);
+		}
+
+		public static Int3 operator -(Int3 c1, Int3 c2)
+		{
+			return new Int3(c1.x - c2.x, c1.y - c2.y, c1.z - c2.z);
+		}
+		
+		public static Int3 operator -(Int3 c)
+		{
+			return new Int3(-c.x, -c.y, -c.z);
+		}
+		
 		public static bool operator ==(Int3 c1, Int3 c2) 
 		{
 			return c1.Equals(c2);
@@ -62,7 +77,7 @@ namespace Vox
 			return x + "," + y + "," + z;
 		}
 		
-		public static implicit operator Int3(Vector3 v)
+		public static explicit operator Int3(Vector3 v)
 		{
 			return new Int3(
 				Mathf.FloorToInt(v.x), 
@@ -71,7 +86,7 @@ namespace Vox
 			);
 		}
 		
-		public static implicit operator Vector3(Int3 v)
+		public static explicit operator Vector3(Int3 v)
 		{
 			return new Vector3(
 				(float)v.x,

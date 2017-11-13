@@ -11,9 +11,28 @@ public class ToolCell : MonoBehaviour
     {
     }
 
-    public Item item;
+    public Text nameText;
+
+    private Item _item;
+
+    public Item item
+    {
+        get { return _item; }
+        set
+        {
+            _item = value;
+            if (_item != null)
+            {
+                nameText.text = _item.id.ToString();
+            }
+            else
+            {
+                nameText.text = "";
+            }
+        }
+    }
     public ItemEvent onSelectItem;
-    
+
 
     public void OnToggleChange(bool isOn)
     {

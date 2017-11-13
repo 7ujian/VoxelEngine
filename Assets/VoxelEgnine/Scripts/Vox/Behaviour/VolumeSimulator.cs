@@ -4,26 +4,27 @@ using UnityEngine;
 
 namespace Vox
 {
-    public class VolumeBehaviour:MonoBehaviour
+    public class VolumeBehaviour : MonoBehaviour
     {
         class BlockUpdateTask
         {
             public byte blockId;
             public Int3 position;
         }
-        
+
         public IVolume volume { get; set; }
         private VoxelEngineContext context;
         private float tickCd = 0;
         private float tickCdMax = 0.1f;
 
-        private List<BlockUpdateTask> tasks = new List<BlockUpdateTask>();        
-        
-        
+        private List<BlockUpdateTask> tasks = new List<BlockUpdateTask>();
+
+
         void Start()
         {
             context = VoxelEngineContext.Default;
             volume.OnBlockAdd += OnBlockAdd;
+            volume.OnBlockRemove += OnBlockRemove;
         }
 
         private void OnBlockAdd(Int3 position, byte blockId)
@@ -35,13 +36,29 @@ namespace Vox
                 {
                     blockId = blockId,
                     position = position
-                    
-                });                
+
+                });
             }
 
         }
 
-        void Update()
+        private void OnBlockRemove(Int3 position, byte blockId)
+        {
+            var blockController = context.blockManager.GetController(blockId);
+            if (blockController.updateEnabled)
+            {
+                for (var i = 0; i < tasks.Count; i++)
+                {
+                    if (tasks[i].position == position)
+                    {
+                        tasks.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+        }
+
+    void Update()
         {
             if (volume == null)
                 return;

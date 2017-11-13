@@ -76,6 +76,6 @@ public class HUD : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
 	public void OnPointerClick(PointerEventData eventData)
 	{
 		if (!eventData.dragging)
-			FindObjectOfType<BlockMan>().OnClicked(eventData.position);
+			FindObjectOfType<BlockMan>().OnClicked(eventData.pressPosition);
 	}
 }
