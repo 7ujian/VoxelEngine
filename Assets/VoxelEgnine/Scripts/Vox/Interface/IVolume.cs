@@ -17,6 +17,8 @@ namespace Vox
         void SetBlock(ref Int3 position, Block block);
         void SetBlockProperty(ref Int3 position, byte property);
         void SetBlockLight(ref Int3 position, byte light);
+
+        void CopyTo(Int3 sourcePosition, Int3 size, IVolume volume, Int3 destPosition);
         
         Int3 size { get; }
         Int3 position { get; set; }

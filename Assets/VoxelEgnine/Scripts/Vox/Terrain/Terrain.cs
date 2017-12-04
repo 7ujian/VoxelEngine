@@ -110,7 +110,7 @@ namespace Vox.Terrain
         {
             var chunkColumn = new ChunkColumn();
             // TODO: @jian 下面要封装起来             
-            chunkColumn.position = new Vector3(
+            chunkColumn.position = new Int3(
                 unchecked (
                     (int)(position.x & Settings.ChunkPositionMask)), 
                     0, 
@@ -128,18 +128,10 @@ namespace Vox.Terrain
             // TODO: @jian 以后这段代码移到 ChunkedVolumeRenderer里面
             
             foreach (var chunk in chunkColumn.chunks)
-            {                
-                var chunkGO = new GameObject();
-                chunk.volume = volume;
-                volume.AddChunk(chunk);
-                chunkGO.name = chunk.ToString();
-                var meshRenderer = chunkGO.AddComponent<MeshRenderer>();
-                chunkGO.AddComponent<MeshFilter>();
-                var renderer = chunkGO.AddComponent<VolumeRenderer>();
-                renderer.volume = chunk;
-                var material = new Material(Shader.Find("Standard"));
-                meshRenderer.material = material;
-                chunkGO.transform.position = chunk.position;
+            {
+                var volumeAccessor = VolumeFactory.Instance.CreateChunk(chunk);
+                volumeAccessor.name = chunk.ToString();                
+                volumeAccessor.transform.position = (Vector3)chunk.position;
             }
         }
 

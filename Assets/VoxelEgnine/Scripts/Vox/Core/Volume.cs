@@ -10,7 +10,7 @@ namespace Vox
 {
 
     [MessagePackObject]
-    public class Volume : IVolume, IRenderable
+    public partial class Volume : IVolume, IRenderable
     {
         [Key(0)]
         public VolumeData data { get; set; }
@@ -31,8 +31,16 @@ namespace Vox
             set { data.position = value; }
         }
 
+        [IgnoreMember] public int dirtyFlag { get; private set; }
+
+        [IgnoreMember]
         public Action<Int3, byte> OnBlockAdd { get; set; }
+        [IgnoreMember]
         public Action<Int3, byte> OnBlockRemove { get; set; }
+
+        public Volume()
+        {            
+        }
 
         public Volume(Int3 size)
         {
@@ -134,6 +142,7 @@ namespace Vox
             data.properties[index] = block.property;
             data.lights[index] = block.light;
 
+            SetDirtyFlag(ref position);
             SetDirty(true);
             
             if (OnBlockAdd != null)
@@ -159,6 +168,7 @@ namespace Vox
             
             data.properties[index] = property;
             
+            SetDirtyFlag(ref position);
             SetDirty(true);
         }
 
@@ -178,8 +188,24 @@ namespace Vox
             var index = GetIndexGlobal(ref position);
             
             data.lights[index] = light;
-            
+
+            SetDirtyFlag(ref position);
             SetDirty(true);
+        }
+
+        protected virtual void SetDirtyFlag(ref Int3 position)
+        {
+            // TODO: @jian 下面可以优化
+            // 1. 使用位运算
+            // 2. 缓存Bounds信息，不要每次计算
+            var w = position.x == this.position.x;
+            var e = position.x == this.position.x + size.x - 1;
+            var s = position.z == this.position.z;
+            var n = position.z == this.position.z + size.z - 1;
+            var d = position.y == this.position.y;
+            var u = position.y == this.position.y + size.y - 1;
+
+            dirtyFlag |= DirtyFlag.GetDirtyMask(n, e, s, w, u, d);
         }
         
         protected virtual void GlobalToLocal(ref Int3 position)
@@ -230,6 +256,40 @@ namespace Vox
         public void SetDirty(bool isDirty)
         {
             isRenderDirty = isDirty;
+        }
+
+        public void ClearDirtyFlag()
+        {
+            dirtyFlag = 0;
+        }
+        
+        // -------------------------
+        // CopyTo
+        // -------------------------
+        public void CopyTo(Int3 sourcePosition, Int3 size, IVolume volume, Int3 destPosition)
+        {
+            // TODO: @jian use unsafe to disable bounds check
+            var from = sourcePosition;
+            var to = destPosition;
+            
+            for (var y = 0; y < size.y; y++)
+            {
+                for (var x = 0; x < size.x; x++)
+                {
+                    for (var z = 0; z < size.z; z++)
+                    {
+                        from.x = sourcePosition.x + x;
+                        from.y = sourcePosition.y + y;
+                        from.z = sourcePosition.z + z;
+                        
+                        to.x = destPosition.x + x;
+                        to.y = destPosition.y + y;
+                        to.z = destPosition.z + z;
+                        
+                        volume.SetBlock(ref to, GetBlock(ref from));
+                    }
+                }
+            }
         }
             
     }

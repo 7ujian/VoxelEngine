@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vox;
 using Vox.Terrain;
 
 public class Character : MonoBehaviour
@@ -10,6 +11,6 @@ public class Character : MonoBehaviour
 	
 	public void Update()
 	{
-		terrainUser.position = transform.position;
+		terrainUser.position = (Int3)transform.position;
 	}
 }

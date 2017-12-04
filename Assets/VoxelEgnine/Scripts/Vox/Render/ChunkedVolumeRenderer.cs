@@ -4,37 +4,49 @@ using UnityEngine;
 
 namespace Vox.Render
 {
+    [RequireComponent(typeof(VolumeAccessor))]
     public class ChunkedVolumeRenderer : MonoBehaviour
-    {
-        public Material material;
-        
+    {        
+        private VolumeAccessor volumeAccessor;
         private ChunkedVolume _volume;
 
-        public ChunkedVolume volume
+
+        void Awake()
         {
-            get { return _volume; }
-            set
+            volumeAccessor = GetComponent<VolumeAccessor>();
+            volumeAccessor.OnChanged += OnVolumeChanged;
+        }
+
+        private void OnVolumeChanged()
+        {
+            if (_volume != null)
             {
-                if (_volume == value)
-                    return;
-
-                if (_volume != null)
-                {
-                    _volume.onCreateChunk -= OnCreateChunk;
-                    _volume.onRemoveChunk -= OnRemoveChunk;
-                }
-
-                RemoveChildren();
-
-                _volume = value;
-
-                if (_volume != null)
-                {
-                    _volume.onCreateChunk += OnCreateChunk;
-                    _volume.onRemoveChunk += OnRemoveChunk;
-                }
-                    
+                _volume.onCreateChunk -= OnCreateChunk;
+                _volume.onRemoveChunk -= OnRemoveChunk;
             }
+            
+            RemoveChildren();
+
+            _volume = volumeAccessor.volume as ChunkedVolume;
+
+            if (_volume != null)
+            {
+                _volume.onCreateChunk += OnCreateChunk;
+                _volume.onRemoveChunk += OnRemoveChunk;
+                InitializeChildren();
+            }                
+        }
+
+        private void InitializeChildren()
+        {
+            // TODO @jian 这里要抽象出来
+            if (_volume is LargeVolume)
+            {
+                foreach (var chunk in (_volume as LargeVolume).chunks.Values)
+                {
+                    OnCreateChunk(chunk);
+                }    
+            }            
         }
 
         private void OnCreateChunk(Chunk chunk)
@@ -44,17 +56,10 @@ namespace Vox.Render
 
             }).ObserveOnMainThread().Subscribe(xs =>
             {
-                // TODO: @jian 这里考虑以后读取Prefab            
-                var go = new GameObject(chunk.ToString());
-                go.AddComponent<MeshFilter>();
-                go.AddComponent<MeshRenderer>().sharedMaterial = material;
-                go.AddComponent<VolumeRenderer>().volume = chunk;
-                // TODO: @jian 这里把Behaviour放在Chunk上，是否在LargeVolume上也需要？
-                go.AddComponent<VolumeBehaviour>().volume = chunk;
-                go.AddComponent<MeshCollider>();
-
-                go.transform.parent = transform;
-                go.transform.localPosition = chunk.position;
+                var volumeAccessor = VolumeFactory.Instance.CreateChunk(chunk);
+                volumeAccessor.name = chunk.ToString();
+                volumeAccessor.transform.parent = transform;
+                volumeAccessor.transform.localPosition = (Vector3)chunk.position;
             });
         }
 

@@ -5,6 +5,31 @@ namespace Vox
 {
     public static class VoxelUtility
     {
+        public static int[] Directions =
+        {
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+        };
+	
+        private static int[] OppositeDirections =
+        {
+            2,
+            3,
+            0,
+            1,
+            5,
+            4,
+        };
+        
+        public static int GetOppositeDirection(int direction)
+        {
+            return OppositeDirections[direction];
+        }
+        
         public static void NorthOf(ref Int3 position, ref Int3 outPosition)
         {
             outPosition.x = position.x;
@@ -68,5 +93,7 @@ namespace Vox
             a.y += b.y;
             a.z += b.z;
         }
+
+
     }
 }

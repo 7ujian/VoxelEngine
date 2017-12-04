@@ -2,8 +2,8 @@
 
 namespace Vox.Render
 {
-    public class VolumeRendererProxy: MonoBehaviour
+    public class VolumeAccessorProxy: MonoBehaviour
     {
-        public VolumeRenderer volumeRenderer;
+        public VolumeAccessor volumeAccessor;
     }
 }

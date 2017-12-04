@@ -5,36 +5,41 @@ using UnityEngine.Assertions.Must;
 namespace Vox.Render
 {
     [RequireComponent(typeof(MeshFilter))]
+    [RequireComponent(typeof(VolumeAccessor))]
     public class VolumeRenderer : MonoBehaviour
-    {
-        private IVolume _volume;
-        
+    {       
+        public bool isBuilding { get; private set; }
+
         public IVolume volume
         {
-            get { return _volume; }
-            set
+            get
             {
-                _volume = value;
-                isDirty = true;
+                if (volumeAccessor == null)
+                    return null;
+                return volumeAccessor.volume;
             }
         }
-        
-        public bool isDirty { get; private set; } 
-        public bool isBuilding { get; private set; }
 
         private MeshFilter meshFilter;
         private MeshCollider meshCollider;
+        private VolumeAccessor volumeAccessor;
         private VoxelEngineContext context;
         
         private void Start()
         {
             meshFilter = GetComponent<MeshFilter>();
             meshCollider = GetComponent<MeshCollider>();
+            volumeAccessor = GetComponent<VolumeAccessor>();
             context = VoxelEngineContext.Default;
         }
 
         public void Update()
         {
+            if (volumeAccessor == null || volumeAccessor.volume == null)
+                return;
+
+            var volume = volumeAccessor.volume;
+            
             if (volume is IRenderable)
             {
                 if (volume.destroyed)
@@ -44,31 +49,32 @@ namespace Vox.Render
                 }
                 
                 var renderable = volume as IRenderable;                
-                if (!isBuilding && (renderable.isRenderDirty || isDirty))
+                if (!isBuilding && (renderable.isRenderDirty || volumeAccessor.isDirty))
                 {
                     var task = new VolumeBuildTask();
                     task.SetVolume(volume, context);
+                    isBuilding = true;
 
                     UniRx.Observable.Start(() =>
                     {                        
-                        context.meshBuilder.Build(task);
-                        isBuilding = true;
+                        context.volumeBuilder.BuildMeshData(task);                        
 
                     }).ObserveOnMainThread().Subscribe(xs =>
                     {
-//                        VolumeRendererManager.Instance.QueueTask(task, () =>
-//                        {
-                            Mesh mesh = task.ToMesh();
-                            meshFilter.mesh = mesh;
+                        // Models
+                        context.volumeBuilder.BuildModels(this, volume, context);
+                         
+                        // Volume Mesh
+                        Mesh mesh = task.ToMesh();
+                        meshFilter.mesh = mesh;
 
-                            if (meshCollider != null)
-                            {
-                                meshCollider.sharedMesh = mesh;
-                            }
-                            isBuilding = false;
-                            isDirty = false;
-                            renderable.Render();    
-//                        });                        
+                        if (meshCollider != null)
+                        {
+                            meshCollider.sharedMesh = mesh;
+                        }
+                        isBuilding = false;
+                        volumeAccessor.isDirty = false;
+                        renderable.Render();
                     });
                 }
             }            

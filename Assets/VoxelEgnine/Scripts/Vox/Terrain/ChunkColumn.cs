@@ -24,7 +24,19 @@ namespace Vox.Terrain
             
             var chunk = chunks[y];
 
-            if (autoCreate && chunk == null)
+            return chunk;
+        }
+        
+        public override Chunk GetOrCreateChunk(ref Int3 position)
+        {
+            var y = position.y >> Settings.BlockPositionBitWidth;
+            
+            Assert.IsTrue(y >= 0 && y <= height, "Out of range");
+            
+            
+            var chunk = chunks[y];
+
+            if (chunk == null)
             {
                 // TODO: @jian 将这部分与LargeVolume整合统一接口
                 chunk = new Chunk();

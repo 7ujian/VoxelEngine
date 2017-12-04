@@ -27,6 +27,11 @@ public class HUD : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
 	
 	private void UpdateCamera()
 	{
+		if (Input.mouseScrollDelta.y != 0)
+		{
+			camera.orthographicSize *= 1 + Mathf.Clamp(Input.mouseScrollDelta.y / 10, -0.5f, 1f);
+		}
+		
 		var y = Mathf.Sin(pitch * Mathf.Deg2Rad);
 		var r = Mathf.Cos(pitch * Mathf.Deg2Rad);
 		
@@ -44,6 +49,10 @@ public class HUD : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
 	
 	public void OnBeginDrag(PointerEventData eventData)
 	{
+		// TODO: @jian 这里先猥琐一下
+		if (Camera.main == null)
+			return;
+		
 		dragStartWorldPosition = Camera.main.ScreenToWorldPoint(eventData.position);
 		isDrag = true;
 	}

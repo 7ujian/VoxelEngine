@@ -1,9 +1,17 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
-namespace VoxelEgnine.Example.Scripts.UI.Blueprints
+public class BlueprintCell : CellView<string>
 {
-    public class BlueprintCell : MonoBehaviour
+    public Text nameText;
+    
+    protected override void UpdateView()
     {
-        
+        nameText.text = item;
+    }
+
+    public void OnClick()
+    {
+        SendMessageUpwards("OnCellClick", item, SendMessageOptions.DontRequireReceiver);        
     }
 }

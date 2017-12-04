@@ -8,8 +8,6 @@ namespace Vox {
 	
 	public abstract class ChunkedVolume : IVolume
 	{
-		[Key(0)]
-		public bool autoCreate = false;
 		
 		[IgnoreMember]
 		public Action<Chunk> onCreateChunk;
@@ -52,6 +50,11 @@ namespace Vox {
             		
         public virtual Chunk GetChunk (ref Int3 position)
         {
+			throw new NotImplementedException();
+		}
+		
+		public virtual Chunk GetOrCreateChunk (ref Int3 position)
+		{
 			throw new NotImplementedException();
 		}
             		
@@ -99,9 +102,10 @@ namespace Vox {
 				return 0;
 		}
 
+		// TODO: @jian 这里考虑用 ref Block block
         public void SetBlock (ref Int3 position, Block block)
         {
-            var chunk = GetChunk(ref position);
+            var chunk = GetOrCreateChunk(ref position);
 
             if (chunk != null)
             {	            
@@ -116,7 +120,7 @@ namespace Vox {
 
 		public void SetBlockLight(ref Int3 position, byte light)
 		{
-			var chunk = GetChunk(ref position);
+			var chunk = GetOrCreateChunk(ref position);
 
 			if (chunk != null)
 			{				
@@ -126,7 +130,7 @@ namespace Vox {
 		
 		public void SetBlockProperty(ref Int3 position, byte property)
 		{
-			var chunk = GetChunk(ref position);
+			var chunk = GetOrCreateChunk(ref position);
 
 			if (chunk != null)
 			{
@@ -137,6 +141,36 @@ namespace Vox {
 		public virtual void Destroy()
 		{
 			destroyed = true;
+		}
+		
+		// -------------------------
+		// CopyTo
+		// -------------------------
+		// TODO: @jian 下面可以分Chunk Copy来优化
+		public void CopyTo(Int3 sourcePosition, Int3 size, IVolume volume, Int3 destPosition)
+		{
+			// TODO: @jian use unsafe to disable bounds check
+			var from = sourcePosition;
+			var to = destPosition;
+            
+			for (var y = 0; y < size.y; y++)
+			{
+				for (var x = 0; x < size.x; x++)
+				{
+					for (var z = 0; z < size.z; z++)
+					{
+						from.x = sourcePosition.x + x;
+						from.y = sourcePosition.y + y;
+						from.z = sourcePosition.z + z;
+                        
+						to.x = destPosition.x + x;
+						to.y = destPosition.y + y;
+						to.z = destPosition.z + z;
+                        
+						volume.SetBlock(ref to, GetBlock(ref from));
+					}
+				}
+			}
 		}
 		
 

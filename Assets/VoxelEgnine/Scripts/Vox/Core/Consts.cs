@@ -1,7 +1,8 @@
 ﻿namespace Vox
 {
-    public class Consts
+    public static class Consts
     {
-        
+        public const int ChunkSize = 16;
+
     }
 }

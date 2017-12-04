@@ -5,6 +5,8 @@ namespace Vox
 {
     public class BlockWater :BlockController
     {
+        public override string name { get { return "Water"; }}
+        
         public override bool isSolid {get { return false; }}
         public override Color32 color {get { return new Color32(0,0,255,255); }}
         public override bool updateEnabled {get { return true; }}
@@ -19,7 +21,7 @@ namespace Vox
             // TODO: @jian 这里临时加载AfterPlace，其实应该放在OnAdded                        
         }
 
-        public override void Update(IVolume volume, ref Int3 position, float deltaTime)
+        public override void Update(IVolume volume, Int3 position, BlockUpdateTask task, float deltaTime)
         {
             var block = volume.GetBlock(ref position);
             var level = GetWaterLevel(block.property);

@@ -7,13 +7,16 @@ using MessagePack;
 namespace Vox
 {
 	[MessagePackObject]
-	public class Chunk : Volume
+	public partial class Chunk : Volume
 	{
 		[IgnoreMember]
 		public ChunkedVolume volume { get; set; }
+
+		[IgnoreMember] 
+		public Chunk[] neighbours = new Chunk[6];
 		
 		public Chunk():base(new Int3(Settings.ChunkSize, Settings.ChunkSize, Settings.ChunkSize))
-		{		
+		{
 		}
 
 //		public override byte GetBlockId(ref Int3 position)
@@ -97,6 +100,49 @@ namespace Vox
 			else if (volume != null)
 				volume.SetBlockLight(ref position, light);		
 		}
+		
+		protected override void SetDirtyFlag(ref Int3 position)
+		{
+			// TODO: @jian 下面可以优化
+			// 1. 使用位运算
+			// 2. 缓存Bounds信息，不要每次计算
+			var w = position.x == this.position.x;
+			var e = position.x == this.position.x + size.x - 1;
+			var s = position.z == this.position.z;
+			var n = position.z == this.position.z + size.z - 1;
+			var d = position.y == this.position.y;
+			var u = position.y == this.position.y + size.y - 1;
+
+			if (n && neighbours[0] != null)
+			{
+				neighbours[0].SetDirty(true);
+			}
+
+			if (e && neighbours[1] != null)
+			{
+				neighbours[1].SetDirty(true);
+			}
+			
+			if (s && neighbours[2] != null)
+			{
+				neighbours[2].SetDirty(true);
+			}
+			
+			if (w && neighbours[3] != null)
+			{
+				neighbours[3].SetDirty(true);
+			}
+			
+			if (u && neighbours[4] != null)
+			{
+				neighbours[4].SetDirty(true);
+			}
+			
+			if (d && neighbours[5] != null)
+			{
+				neighbours[5].SetDirty(true);
+			}				
+		}
 
 		protected override void GlobalToLocal(ref Int3 position)
 		{
@@ -171,5 +217,7 @@ namespace Vox
 		{
 			destroyed = true;
 		}
+
+		
 	}
 }

@@ -5,12 +5,14 @@ namespace Vox
     public class VoxelEngineContext
     {
         public BlockManager blockManager { get; private set; }
-        public VolumeMeshBuilder meshBuilder { get; private set; }
+        public VolumeBuilder volumeBuilder { get; private set; }        
+        public ModelManager modelManager { get; private set; }
 
-        public VoxelEngineContext(BlockManager blockManager, VolumeMeshBuilder meshBuilder)
+        public VoxelEngineContext(BlockManager blockManager, VolumeBuilder volumeBuilder, ModelManager modelManager)
         {
             this.blockManager = blockManager;
-            this.meshBuilder = meshBuilder;
+            this.volumeBuilder = volumeBuilder;
+            this.modelManager = modelManager;
         }
 
         private static VoxelEngineContext _Default;
@@ -22,7 +24,7 @@ namespace Vox
                 if (_Default == null)
                 {
                     _Default = new VoxelEngineContext(
-                        new BlockManager(), new VolumeMeshBuilder());
+                        new BlockManager(), new VolumeMeshBuilder(), new ModelManager());
                     _Default.blockManager.Initialize();
                 }
 

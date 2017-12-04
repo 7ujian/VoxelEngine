@@ -7,11 +7,11 @@ namespace Vox.Render
         public MeshData meshData = new MeshData();
         public IVolume volume;
         public VoxelEngineContext context;
-
+        
         public void SetVolume(IVolume volume, VoxelEngineContext context)
         {
             this.volume = volume;
-            this.context = context;
+            this.context = context;            
         }
 
         public Mesh ToMesh(Mesh mesh = null)
@@ -34,7 +34,7 @@ namespace Vox.Render
         {
             meshData.Clear();
             volume = null;
-            context = null;
+            context = null;            
         }
     }
 }

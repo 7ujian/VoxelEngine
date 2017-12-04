@@ -93,7 +93,8 @@ public class VoxDemo : MonoBehaviour {
 		chunkGO.AddComponent<MeshFilter>();
 		var meshRenderer =chunkGO.AddComponent<MeshRenderer>();
 		var volumeRenderer = chunkGO.AddComponent<VolumeRenderer>();
-		volumeRenderer.volume = chunk;
+		
+		chunkGO.AddComponent<VolumeAccessor>().volume = chunk;
 
 		if (defaultVolumeMaterial != null)
 			meshRenderer.material = defaultVolumeMaterial;

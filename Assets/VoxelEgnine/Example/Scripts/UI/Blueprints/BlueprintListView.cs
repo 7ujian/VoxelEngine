@@ -1,9 +1,18 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
-namespace VoxelEgnine.Example.Scripts.UI.Blueprints
+public class BlueprintListView : ListView<string>
 {
-    public class BlueprintListView : MonoBehaviour
-    {
+    [Serializable]
+    public class BlueprintListEvent:UnityEvent<string>{}
         
+    [SerializeField]
+    public BlueprintListEvent onCellClick = new BlueprintListEvent();
+    
+    public void OnCellClick(string filename)
+    {        
+        onCellClick.Invoke(filename);    
     }
 }
